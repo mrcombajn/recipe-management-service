@@ -1,9 +1,8 @@
 package recipes.repository;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.stereotype.Repository;
 import recipes.entities.Recipe;
+import recipes.entities.exceptions.EntityNotFoundException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,18 +13,16 @@ public class RecipeRepository {
     private final List<Recipe> recipes = new ArrayList<>();
 
     public Recipe getRecipeById(int id) {
-        return recipes.get(id);
+        try {
+            return recipes.get(id);
+        } catch (ArrayIndexOutOfBoundsException e) {
+            throw new EntityNotFoundException("(Not found)");
+        }
     }
 
-    public void saveRecipe(String json) {
-        ObjectMapper objectMapper = new ObjectMapper();
+    public int saveRecipe(Recipe recipe) {
+        recipes.add(recipe);
 
-        try {
-            Recipe recipe = objectMapper.readValue(json, Recipe.class);
-
-            recipes.add(recipe);
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
-        }
+        return recipes.indexOf(recipe);
     }
 }

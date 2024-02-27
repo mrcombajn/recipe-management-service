@@ -2,25 +2,25 @@ package recipes.services;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import recipes.controllers.requests.RecipeRequest;
 import recipes.entities.Recipe;
-import recipes.entities.exceptions.EntityNotFoundException;
+import recipes.helpers.mappers.RecipeMapper;
 import recipes.repository.RecipeRepository;
+
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
 public class RecipeService {
 
     private final RecipeRepository recipeRepository;
-    public Recipe getRecipeById(int id) {
-        try {
-            return recipeRepository.getRecipeById(id);
-        }
-        catch (Exception e) {
-            throw new EntityNotFoundException("(Not found)");
-        }
+    public RecipeRequest getRecipeById(int id) {
+        return RecipeMapper.createRequestFromRecipe(recipeRepository.getRecipeById(id));
     }
 
-    public void saveRecipe(String json) {
-        recipeRepository.saveRecipe(json);
+    public Map<String, Integer> saveRecipe(RecipeRequest recipeRequest) {
+        Recipe recipe = RecipeMapper.createRecipeFromRequest(recipeRequest);
+
+        return Map.of("id", recipeRepository.saveRecipe(recipe));
     }
 }

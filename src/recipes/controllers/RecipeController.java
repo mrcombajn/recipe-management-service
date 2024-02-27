@@ -1,9 +1,12 @@
 package recipes.controllers;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import recipes.entities.Recipe;
+import recipes.controllers.requests.RecipeRequest;
 import recipes.services.RecipeService;
+
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/recipe")
@@ -12,13 +15,14 @@ public class RecipeController {
 
     private final RecipeService recipeService;
 
-    @GetMapping("/{id}")
-    public Recipe getRecipeById(@PathVariable int id) {
-        return recipeService.getRecipeById(id);
+    @GetMapping(value = "/{id}", produces = "application/json")
+    public ResponseEntity<RecipeRequest> getRecipeById(@PathVariable int id) {
+            return ResponseEntity.ok(recipeService.getRecipeById(id));
     }
 
-    @PostMapping
-    public void writeSingleRecipe(@RequestBody String json) {
-        recipeService.saveRecipe(json);
+    @PostMapping(value = "/new", consumes = "application/json", produces = "application/json")
+    public ResponseEntity<Map<String, Integer>> saveSingleRecipe(@RequestBody RecipeRequest recipeRequest) {
+        return ResponseEntity
+                .ok(recipeService.saveRecipe(recipeRequest));
     }
 }
