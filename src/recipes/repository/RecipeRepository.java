@@ -15,7 +15,7 @@ public class RecipeRepository {
     public Recipe getRecipeById(int id) {
         try {
             return recipes.get(id);
-        } catch (ArrayIndexOutOfBoundsException e) {
+        } catch (IndexOutOfBoundsException e) {
             throw new EntityNotFoundException("(Not found)");
         }
     }
